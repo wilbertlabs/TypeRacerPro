@@ -170,6 +170,11 @@
         <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-[10px] sm:text-xs flex-shrink-0" id="user-avatar-initials">?</div>
         <span class="font-label-caps text-[10px] sm:text-[11px] text-on-surface-variant hidden sm:block" id="header-username">Guest</span>
       </div>
+      <button id="logout-btn" onclick="logout()" title="Logout" style="display:none"
+        class="flex items-center gap-1 bg-surface-container hover:bg-error/10 border border-outline-variant/40 hover:border-error/30 text-on-surface-variant hover:text-error transition-all px-2.5 py-1.5 rounded-full">
+        <span class="material-symbols-outlined" style="font-size:16px">logout</span>
+        <span class="font-label-caps text-[9px] sm:text-[10px] hidden sm:block">LOGOUT</span>
+      </button>
     </div>
   </div>
 </header>
@@ -406,6 +411,26 @@
 </nav>
 
 
+<!-- LOGOUT CONFIRM MODAL -->
+<div id="logout-modal" class="hidden fixed inset-0 z-[150] flex items-center justify-center px-4" style="background:rgba(26,28,27,0.5);backdrop-filter:blur(6px);">
+  <div class="fade-up glass-card rounded-3xl p-6 sm:p-8 w-full max-w-sm relative border border-white/60 shadow-2xl" style="background:rgba(255,255,255,0.95)">
+    <div class="absolute top-0 left-0 w-full h-1 rounded-t-3xl" style="background:linear-gradient(90deg,#ab3500,#ff6b35)"></div>
+    <div class="flex justify-center mb-4">
+      <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background:rgba(186,26,26,0.08);border:2px solid rgba(186,26,26,0.15)">
+        <span class="material-symbols-outlined" style="font-size:28px;color:#ba1a1a;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24">logout</span>
+      </div>
+    </div>
+    <h3 class="font-headline-sm text-center text-on-surface mb-1">Yakin ingin logout?</h3>
+    <p class="text-sm text-on-surface-variant text-center mb-6 leading-relaxed">Kamu akan keluar dari akun <span id="logout-username-label" class="font-bold text-on-surface"></span>. Sesi permainan saat ini akan direset.</p>
+    <div class="flex gap-3">
+      <button onclick="closeLogoutModal()" class="flex-1 bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 text-on-surface font-label-caps text-[10px] sm:text-[11px] py-3 rounded-xl transition-all">BATAL</button>
+      <button onclick="confirmLogout()" class="flex-1 font-label-caps text-[10px] sm:text-[11px] py-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-white hover:-translate-y-0.5 shadow-md" style="background:#ba1a1a">
+        <span class="material-symbols-outlined" style="font-size:14px">logout</span>LOGOUT
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- RESULT MODAL -->
 <div id="result-modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm px-0 sm:px-4">
   <div class="fade-up glass-card rounded-t-3xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-lg relative border border-white/60 shadow-2xl">
@@ -455,18 +480,54 @@ const PASSAGES = {
     "Cats love to sleep near windows where the sun shines warm and bright. They purr softly when you pet them gently.",
     "Learning to type fast takes daily practice and patience. Keep your fingers on the home row and your eyes on the screen.",
     "A good book can take you to places you have never been before. Reading every day makes your mind sharp and your vocabulary rich.",
+    "The dog ran across the park and jumped over the small fence. It barked at the birds and then sat down by the tree.",
+    "Fresh bread from the bakery smells so warm and good. We bought a loaf every morning on the way to the lake house.",
+    "She smiled and waved from across the street. It was a simple gesture but it made the whole day feel bright and full.",
+    "The train left the station on time and the hills rolled by in long green waves. We sat and watched the world pass us by.",
+    "Every morning he made coffee and sat by the window. The street below was quiet and the day had not yet found its rhythm.",
+    "Rain fell softly on the roof all night long. By morning the garden was wet and the air smelled like clean soil.",
+    "She packed her bag the night before and set it by the door. Travel always felt like stepping into a new version of herself.",
+    "The puppy learned its name by the end of the first week. It would look up and tilt its head each time you called it.",
+    "He liked to keep things simple. A cup of tea, a good chair, and a window with a view of the yard was all he needed.",
+    "The market opened at dawn and closed when the last vendor ran out of things to sell. It smelled of fruit, spices, and bread.",
+    "She read the letter twice and then folded it neatly. Some words are too important to rush through only once.",
+    "The kids built a sandcastle near the water. They worked for hours patting the walls smooth and adding little flags on top.",
   ],
   medium: [
     "Precision is the keystone of performance. The modern typing experience transcends mere input; it is a rhythmic dance between human cognition and technical execution.",
     "The ability to communicate clearly is one of the most powerful skills a person can develop. Writing quickly and accurately accelerates every aspect of professional work.",
     "Every expert was once a beginner who refused to give up. The path to mastery is paved with deliberate practice, reflection, and the willingness to make mistakes.",
     "Software developers spend a significant portion of their time writing code, documentation, and messages. Improving typing speed directly translates into measurable productivity gains.",
+    "The human brain is remarkably adaptable. When we practice a skill consistently, neural pathways strengthen and actions that once required conscious effort become almost entirely automatic.",
+    "Cities are living systems, constantly growing and shifting in response to the people who inhabit them. Architecture, transit, and culture intertwine to shape the daily rhythm of urban life.",
+    "Climate change demands not just awareness but action. Individuals, corporations, and governments must collaborate across borders to develop solutions that are both effective and equitable.",
+    "Photography is the art of capturing a single moment and giving it permanence. A great photograph tells a story that words alone could never fully express.",
+    "The history of language is the history of human thought. As civilizations rise and fall, the words they leave behind offer a window into how they understood the world.",
+    "Leadership is not about authority; it is about influence. The most effective leaders inspire those around them not through commands but through consistency, integrity, and genuine care.",
+    "Music has the power to cross every cultural boundary. A melody heard for the first time can still feel familiar, as if it has always lived somewhere deep inside you.",
+    "The internet has reshaped how we learn, connect, and create. While it has opened remarkable opportunities, it also demands that we approach information with critical thinking and discernment.",
+    "Time management is less about squeezing more into each day and more about deciding what truly deserves your focus. Not everything urgent is important, and not everything important feels urgent.",
+    "Good writing is not about using impressive words. It is about choosing the right words, arranging them with care, and making the reader feel that every sentence was worth their time.",
+    "Exercise is one of the most evidence-backed interventions for mental health. Even moderate daily movement can reduce anxiety, improve sleep quality, and sharpen concentration significantly.",
+    "Cooking from scratch is both a practical skill and a form of creative expression. Understanding ingredients and technique gives you the freedom to improvise and make something entirely your own.",
   ],
   hard: [
     "Asynchronous programming paradigms, particularly those leveraging event-driven architectures, fundamentally alter how developers conceptualize concurrency — eschewing traditional thread-blocking models in favor of non-blocking callbacks and promises.",
     "The juxtaposition of baroque counterpoint with contemporary jazz harmony exemplifies the perpetual dialectic between tradition and innovation that characterizes the evolution of Western musical thought.",
     "Quantum entanglement — Einstein's so-called 'spooky action at a distance' — challenges our classical intuitions about locality and realism, suggesting that measurement outcomes exhibit correlations inexplicable by any local hidden-variable theory.",
     "Epidemiological surveillance systems must integrate heterogeneous data sources, including syndromic indicators, genomic sequencing outputs, and demographic stratification metrics, to enable timely, spatially-resolved outbreak characterization.",
+    "The philosophical tension between determinism and libertarian free will remains unresolved; compatibilist frameworks attempt to reconcile causal necessity with moral responsibility, though critics contend the reconciliation is fundamentally illusory.",
+    "Neuroplasticity research has dismantled the long-held assumption that the adult brain is structurally fixed; synaptic remodeling, axonal sprouting, and experience-dependent cortical reorganization continue throughout the lifespan under appropriate conditions.",
+    "Macroeconomic stabilization policy operates through both fiscal and monetary channels, yet the precise transmission mechanisms — and their lag structures — remain subjects of considerable theoretical dispute among heterodox and mainstream economists alike.",
+    "The recursive self-referential nature of Godel's incompleteness theorems demonstrated that within any sufficiently expressive formal system, there exist true propositions that cannot be proven using the axioms of that very system.",
+    "Post-structuralist critiques of the Enlightenment subject challenge the notion of a unified, rational self — arguing instead that identity is constituted through discursive formations, power relations, and the perpetual deferral of stable meaning.",
+    "Byzantine fault tolerance in distributed systems requires algorithms capable of reaching consensus even when an arbitrary subset of nodes behaves maliciously or unpredictably, a constraint that significantly elevates computational and communicational overhead.",
+    "The thermodynamic arrow of time — entropy's irreversible tendency toward disorder — distinguishes the macroscopic future from the past, yet the microscopic laws of physics remain entirely time-symmetric, a paradox that continues to resist complete resolution.",
+    "Generative adversarial networks operate through an adversarial minimax game between a generator and a discriminator, each iteratively improving until the generator produces samples indistinguishable from the true data distribution by the discriminator.",
+    "Sociological theories of stratification diverge sharply between functionalist accounts emphasizing meritocratic sorting and conflict-theoretic perspectives that locate inequality in the structural perpetuation of class, racial, and gendered hierarchies.",
+    "The interplay between pharmacokinetics and pharmacodynamics determines a drug's therapeutic window; deviations arising from cytochrome P450 polymorphisms can dramatically alter plasma concentration curves and precipitate adverse reactions.",
+    "Dark matter's gravitational influence on galactic rotation curves and large-scale structure formation constitutes compelling indirect evidence for its existence, yet no direct detection experiment has thus far yielded a statistically unambiguous signal.",
+    "Constitutional originalism and living constitutionalism represent fundamentally incompatible interpretive philosophies: the former anchors legal meaning in historical intent, while the latter treats the document as deliberately adaptive to evolving societal norms.",
   ]
 };
 
@@ -511,6 +572,7 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     document.getElementById('name-setup').style.display = 'block';
     document.getElementById('header-username').textContent = 'Guest';
+    document.getElementById('logout-btn').style.display = 'none';
     newText();
   }
   renderHeatmap();
@@ -542,7 +604,39 @@ function showArena() {
   document.getElementById('name-setup').style.display = 'none';
   document.getElementById('header-username').textContent = state.username;
   document.getElementById('user-avatar-initials').textContent = state.username.slice(0,2).toUpperCase();
+  document.getElementById('logout-btn').style.display = 'flex';
   if (state.words.length === 0) newText();
+}
+
+function logout() {
+  document.getElementById('logout-username-label').textContent = state.username;
+  document.getElementById('logout-modal').classList.remove('hidden');
+}
+
+function closeLogoutModal() {
+  document.getElementById('logout-modal').classList.add('hidden');
+}
+
+function confirmLogout() {
+  closeLogoutModal();
+  clearInterval(state.timerInterval);
+  state.username = '';
+  localStorage.removeItem('tr_username');
+  Object.assign(state, {
+    words: [], currentWordIdx: 0, totalCharsTyped: 0, errorCount: 0,
+    keystrokeCount: 0, wpm: 0, accuracy: 100, timeLeft: state.timerDuration,
+    started: false, finished: false, startTime: null,
+    wpmHistory: [], peakWpm: 0, keyHits: {}
+  });
+  document.getElementById('header-username').textContent = 'Guest';
+  document.getElementById('user-avatar-initials').textContent = '?';
+  document.getElementById('logout-btn').style.display = 'none';
+  document.getElementById('name-setup').style.display = 'block';
+  document.getElementById('username-input').value = '';
+  document.getElementById('result-modal').classList.add('hidden');
+  navigate('arena');
+  newText();
+  setStatus('READY', 'bg-surface-container text-on-surface-variant');
 }
 
 function navigate(page) {
@@ -898,6 +992,10 @@ function escHtml(s) {
 
 document.getElementById('result-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
+});
+
+document.getElementById('logout-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeLogoutModal();
 });
 
 document.addEventListener('click', (e) => {
